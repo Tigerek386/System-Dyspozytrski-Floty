@@ -1,22 +1,26 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Register - FleetRoute{% endblock %}
 {% block content %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
 <div class="card">
     <h1>Register</h1>
     <p>Create an account as a <strong>dispatcher</strong>, a <strong>fleet manager</strong>
     or a <strong>driver</strong>.</p>
-    <form method="post" style="max-width: 420px;">
+    <form method="post">
         {% csrf_token %}
         {% for field in form %}
-            <label>
+            <label style="display: block;margin-left:auto;margin-right:auto;margin-bottom: 0.1rem;">
                 {{ field.label }}
                 {{ field }}
                 {% if field.errors %}
                     <span class="field-errors">{{ field.errors|join:", " }}</span>
                 {% endif %}
-            </label>
+            </label><br>
         {% endfor %}
-        <button type="submit">Register</button>
+        <button style="display:block;color:#fff;margin:auto" type="submit">Register</button>
     </form>
     <p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
 </div>

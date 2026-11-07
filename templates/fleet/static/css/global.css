@@ -1,0 +1,180 @@
+    body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        background: #f4f6f8;
+        color: #222;
+    }
+
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        transition: box-shadow 0.3s ease;
+        background: #f4f6f8;
+        color: #222;
+        padding: 0.75rem 1.5rem 0.75rem 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 29px;
+    }
+    header.scrolled{
+        box-shadow: 0 1px 15px rgba(0, 0, 0, .4);
+    }
+
+    header a {
+        color: #222;
+        margin-left: 1rem;
+        text-decoration: none;
+    }
+
+    main {
+        max-width: 1100px;
+        margin: 1.5rem auto;
+        padding: 0 1rem;
+    }
+
+    .card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+    }
+
+    th,
+    td {
+        text-align: left;
+        padding: 0.4rem 0.6rem;
+        border-bottom: 1px solid #e3e7eb;
+    }
+
+    th {
+        background: #eef2f6;
+    }
+
+    form.inline {
+        display: inline;
+    }
+
+    input,
+    select,
+    textarea {
+        padding: 0.35rem;
+        border: 1px solid #c4ccd4;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 0.6rem;
+        align-items: end;
+    }
+
+    .form-grid label {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.85rem;
+        gap: 0.2rem;
+    }
+
+    button {
+        background: #1f3a5f;
+        color: #fefcfc;
+        border: 0;
+        padding: 0.45rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+
+    .messages {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1rem;
+    }
+
+    .messages li {
+        padding: 0.5rem 0.8rem;
+        border-radius: 4px;
+        margin-bottom: 0.4rem;
+        font-size: 0.9rem;
+    }
+
+    .messages .success {
+        background: #d7f0dd;
+        color: #1c5e2e;
+    }
+
+    .messages .error {
+        background: #fadbd8;
+        color: #8a1f14;
+    }
+
+    .field-errors {
+        color: #8a1f14;
+        font-size: 0.8rem;
+        margin: 0.2rem 0 0;
+    }
+
+    .profit-positive {
+        color: #1c5e2e;
+        font-weight: 600;
+    }
+
+    .profit-negative {
+        color: #8a1f14;
+        font-weight: 600;
+    }
+    strong {
+        color: #295fab;
+        font-weight: 700;
+        font-size: 1.25rem;
+    }
+    nav {
+        display: inline-flex;
+    }
+    .dashboard-svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    .vehicle-svg {
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+    .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dashboard-link {
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-link a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0;
+}
+
+.dashboard-link img {
+    width: 1.2rem;
+    height: 1.2rem;
+    display: block;
+}
+
+.header-actions form {
+    display: flex;
+    align-items: center;
+}

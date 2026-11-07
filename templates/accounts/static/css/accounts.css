@@ -1,0 +1,15 @@
+.card{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+button {
+        background: #1f3a5f;
+    color: #fcfcfc;
+    border: 0;
+    padding: 0.45rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
