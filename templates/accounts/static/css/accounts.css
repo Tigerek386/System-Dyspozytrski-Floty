@@ -13,3 +13,18 @@ button {
     cursor: pointer;
     font-size: 0.9rem;
 }
+th {
+  background:none;
+  margin: auto;
+    width: auto;
+}
+table {
+  width: auto;
+  
+}
+th,td{
+  border-bottom: 0px solid #000000;
+}
+th.center {
+  text-align: center;  
+}
