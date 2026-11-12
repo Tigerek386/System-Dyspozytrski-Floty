@@ -9,10 +9,12 @@
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
 </head>
 <body>
+{% block header %}
 <header class="topbar">
-    {% block header %}
+    {% block header_items %}
     <strong>FleetRoute</strong>
     {% endblock %}
+    {% block header_actions %}
     <div class="header-actions">
         {% if user.is_authenticated %}
             <span>{{ user.username }} ({{ user.get_role_display }})</span>
@@ -35,9 +37,9 @@
             <a href="{% url 'register' %}">Register</a>
         {% endif %}
         </div>
-    
+    {% endblock %}
 </header>
-
+{% endblock %}
 
 
 <main>
@@ -52,5 +54,6 @@
 </main>
 
 <script src="{% static 'js/global.js' %}" defer></script>
+<script src="{% static 'htmx/htmx.min.js' %}" defer></script>
 </body>
 </html>

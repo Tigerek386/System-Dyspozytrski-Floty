@@ -1,16 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Dashboard - FleetRoute{% endblock %}
-{% block header %}
+{% block header_items %}
     {{ block.super }}
-<div style="margin-left:8px;margin-right: auto;">
-<a href="{% url 'vehicles' %}" 
-style="display:flex;background:transparent;padding:0.2rem 0.7rem;">
+<div hx-get="{% url 'vehicles' %}"hx-trigger="click" hx-target="main" hx-swap="innerHTML" style="display:flex;background:transparent;padding:0.2rem 0.7rem;margin-left:8px;margin-right:auto;cursor:pointer;">
 <img src="{% static 'svg/vehicles.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px;">
 <p1 style="font-weight: 600;">Pojazdy</p1>
-</a>
 </div>
 {% endblock %}
+
 {% block content %}
 
 
