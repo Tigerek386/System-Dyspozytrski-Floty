@@ -1,16 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Vehicles - FleetRoute{% endblock %}
-{% block header %}
-    {{ block.super }}
-    <div style="margin-left:8px;margin-right: auto;">
-<a href="{% url 'vehicles' %}" 
-style="display:flex;background:transparent;padding:0.2rem 0.7rem;">
-<img src="{% static 'svg/vehicles.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px; filter: brightness(0) saturate(100%) invert(35%) sepia(48%) saturate(1436%) hue-rotate(187deg) brightness(91%) contrast(88%);">
-<p1 style="font-weight: 600;color:#295FAB">Pojazdy</p1>
-</a>
-</div>
-{% endblock %}
+{% block header %}{% endblock %}
+{% block header_actions %}{% endblock %}
 {% block content %}
 <h1>Vehicles</h1>
 <div class="card">
