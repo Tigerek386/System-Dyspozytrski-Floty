@@ -1,17 +1,3 @@
-{% extends "base.html" %}
-{% load static %}
-{% block title %}Dashboard - FleetRoute{% endblock %}
-{% block header_items %}
-    {{ block.super }}
-<div hx-get="{% url 'vehicles' %}"hx-trigger="click" hx-target="main" hx-swap="innerHTML" style="display:flex;background:transparent;padding:0.2rem 0.7rem;margin-left:8px;margin-right:auto;cursor:pointer;">
-<img src="{% static 'svg/vehicles.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px;">
-<p1 style="font-weight: 600;">Pojazdy</p1>
-</div>
-{% endblock %}
-
-{% block content %}
-
-
 <h1>Dashboard</h1>
 
 <div class="card">
@@ -27,14 +13,14 @@
         <tbody>
         {% for order in orders %}
             <tr>
-                <td>{{ order.pk }}</td>
-                <td>{{ order.customer }}</td>
-                <td>{{ order.cargo_weight_kg }}</td>
-                <td>{{ order.planned_start|date:"Y-m-d H:i" }}</td>
-                <td>{{ order.planned_end|date:"Y-m-d H:i" }}</td>
-                <td>{{ order.vehicle }}</td>
-                <td>{{ order.driver }}</td>
-                <td>
+                <td data-label="#">{{ order.pk }}</td>
+                <td class="row-title" data-label="Customer">{{ order.customer }}</td>
+                <td data-label="Cargo (kg)">{{ order.cargo_weight_kg }}</td>
+                <td data-label="Start">{{ order.planned_start|date:"Y-m-d H:i" }}</td>
+                <td data-label="End">{{ order.planned_end|date:"Y-m-d H:i" }}</td>
+                <td data-label="Vehicle">{{ order.vehicle }}</td>
+                <td data-label="Driver">{{ order.driver }}</td>
+                <td data-label="Status">
                     <form class="inline" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="form" value="status">
@@ -46,14 +32,14 @@
                         </select>
                     </form>
                 </td>
-                <td>{{ order.price_pln }}</td>
-                <td>{{ order.estimated_cost_pln }}</td>
-                <td class="{% if order.profit_pln >= 0 %}profit-positive{% else %}profit-negative{% endif %}">
+                <td data-label="Price (PLN)">{{ order.price_pln }}</td>
+                <td data-label="Cost (PLN)">{{ order.estimated_cost_pln }}</td>
+                <td class="{% if order.profit_pln >= 0 %}profit-positive{% else %}profit-negative{% endif %}" data-label="Profit (PLN)">
                     {{ order.profit_pln }}
                 </td>
             </tr>
         {% empty %}
-            <tr><td colspan="10">No orders yet — add one below.</td></tr>
+            <tr class="empty-row"><td colspan="10">No orders yet — add one below.</td></tr>
         {% endfor %}
         </tbody>
     </table>
@@ -68,14 +54,14 @@
         <tbody>
         {% for vehicle in vehicles %}
             <tr>
-                <td>{{ vehicle.plate_number }}</td>
-                <td>{{ vehicle.vehicle_type }}</td>
-                <td>{{ vehicle.max_load_capacity_kg }}</td>
-                <td>{{ vehicle.technical_inspection_expiry|date:"Y-m-d" }}</td>
-                <td>{{ vehicle.insurance_expiry|date:"Y-m-d" }}</td>
+                <td class="row-title" data-label="Plate">{{ vehicle.plate_number }}</td>
+                <td data-label="Type">{{ vehicle.vehicle_type }}</td>
+                <td data-label="Max load (kg)">{{ vehicle.max_load_capacity_kg }}</td>
+                <td data-label="Inspection until">{{ vehicle.technical_inspection_expiry|date:"Y-m-d" }}</td>
+                <td data-label="Insurance until">{{ vehicle.insurance_expiry|date:"Y-m-d" }}</td>
             </tr>
         {% empty %}
-            <tr><td colspan="5">No vehicles yet — add one below.</td></tr>
+            <tr class="empty-row"><td colspan="5">No vehicles yet — add one below.</td></tr>
         {% endfor %}
         </tbody>
     </table>
@@ -90,14 +76,14 @@
         <tbody>
         {% for driver in drivers %}
             <tr>
-                <td>{{ driver }}</td>
-                <td>{{ driver.license_category }}</td>
-                <td>{{ driver.phone|default:"-" }}</td>
-                <td>{{ driver.is_active|yesno }}</td>
-                <td>{{ driver.user.username|default:"-" }}</td>
+                <td class="row-title" data-label="Name">{{ driver }}</td>
+                <td data-label="License">{{ driver.license_category }}</td>
+                <td data-label="Phone">{{ driver.phone|default:"-" }}</td>
+                <td data-label="Active">{{ driver.is_active|yesno }}</td>
+                <td data-label="Linked account">{{ driver.user.username|default:"-" }}</td>
             </tr>
         {% empty %}
-            <tr><td colspan="5">No drivers yet — add one below.</td></tr>
+            <tr class="empty-row"><td colspan="5">No drivers yet — add one below.</td></tr>
         {% endfor %}
         </tbody>
     </table>
@@ -179,5 +165,3 @@
         <button type="submit">Add order</button>
     </form>
 </div>
-
-{% endblock %}

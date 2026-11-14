@@ -2,31 +2,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}FleetRoute{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/global.css' %}">
 </head>
 <body>
-{% block header %}
+
 <header class="topbar">
     {% block header_items %}
     <strong>FleetRoute</strong>
+    {% if user.is_authenticated and not user.is_driver %}
+    <div hx-get="{% url 'vehicles' %}" hx-trigger="click" hx-target="#content" style="display:flex;background:transparent;padding:0.2rem 0.7rem;margin-left:8px;margin-right:auto;cursor:pointer;">
+        <img src="{% static 'svg/vehicles.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px;">
+        <p1 style="font-weight: 600;">Pojazdy</p1>
+    </div>
+    {% endif %}
     {% endblock %}
     {% block header_actions %}
     <div class="header-actions">
         {% if user.is_authenticated %}
             <span>{{ user.username }} ({{ user.get_role_display }})</span>
             {% if user.is_driver %}
-                <a href="{% url 'driver_dashboard' %}">My tasks</a>
+                <a href="{% url 'driver_dashboard' %}" hx-get="{% url 'driver_dashboard' %}" hx-target="#content">My tasks</a>
             {% else %}
             <div class="dashboard-link">
-                <a href="{% url 'dashboard' %}">
+                <a href="{% url 'dashboard' %}" hx-get="{% url 'dashboard' %}" hx-target="#content">
                 <img src="{% static 'svg/dashboard.svg' %}" alt="" style="float:left">
                 Dashboard
                 </a>
-                </div>
+            </div>
             {% endif %}
             <form class="inline" method="post" action="{% url 'logout' %}">
                 {% csrf_token %}
@@ -36,11 +41,9 @@
             <a href="{% url 'login' %}">Log in</a>
             <a href="{% url 'register' %}">Register</a>
         {% endif %}
-        </div>
+    </div>
     {% endblock %}
 </header>
-{% endblock %}
-
 
 <main>
     {% if messages %}
@@ -50,7 +53,12 @@
             {% endfor %}
         </ul>
     {% endif %}
-    {% block content %}{% endblock %}
+    {% if start_url %}
+    {# App shell: htmx loads the role-based content fragment into #content. #}
+    <div id="content" hx-get="{{ start_url }}" hx-trigger="load"></div>
+    {% else %}
+        {% block content %}{% endblock %}
+    {% endif %}
 </main>
 
 <script src="{% static 'js/global.js' %}" defer></script>

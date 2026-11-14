@@ -179,3 +179,92 @@
     display: flex;
     align-items: center;
 }
+
+/* Mobile layout: header wraps, tables become stacked cards. */
+@media (max-width: 700px) {
+    header {
+        height: auto;
+        flex-wrap: wrap;
+        gap: 0.4rem 0;
+        padding: 0.6rem 1rem;
+    }
+
+    .header-actions {
+        gap: 0.75rem;
+    }
+
+    main {
+        margin: 1rem auto;
+    }
+
+    .card {
+        padding: 0.9rem 1rem;
+    }
+
+    .card thead {
+        display: none;
+    }
+
+    .card tbody tr {
+        display: block;
+        background: #f7f9fb;
+        border: 1px solid #e3e7eb;
+        border-radius: 6px;
+        padding: 0.6rem 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .card tbody tr:last-child {
+        margin-bottom: 0;
+    }
+
+    .card td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.25rem 0;
+        border-bottom: 0;
+    }
+
+    .card td::before {
+        content: attr(data-label);
+        color: #6b7680;
+        font-size: 0.85rem;
+    }
+
+    .card td.row-title {
+        display: block;
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .card td.row-title::before {
+        content: none;
+    }
+
+    .card tr.empty-row {
+        background: transparent;
+        border: 0;
+        padding: 0;
+    }
+
+    .card tr.empty-row td {
+        display: block;
+        color: #6b7680;
+    }
+
+    /* Larger touch targets. */
+    button {
+        padding: 0.55rem 1.1rem;
+        font-size: 0.95rem;
+    }
+
+    input,
+    select,
+    textarea {
+        padding: 0.45rem;
+        font-size: 1rem;
+    }
+}

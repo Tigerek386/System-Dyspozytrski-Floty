@@ -1,7 +1,3 @@
-{% extends "base.html" %}
-{% block title %}My tasks - FleetRoute{% endblock %}
-{% block content %}
-
 <h1>My tasks</h1>
 
 {% if not profile %}
@@ -24,15 +20,15 @@
         <tbody>
         {% for order in active_orders %}
             <tr>
-                <td>{{ order.pk }}</td>
-                <td>{{ order.customer }}</td>
-                <td>{{ order.description|default:"-" }}</td>
-                <td>{{ order.cargo_weight_kg }}</td>
-                <td>{{ order.planned_start|date:"Y-m-d H:i" }}</td>
-                <td>{{ order.planned_end|date:"Y-m-d H:i" }}</td>
-                <td>{{ order.vehicle }}</td>
-                <td>
-                    <form class="inline" method="post">
+                <td data-label="#">{{ order.pk }}</td>
+                <td class="row-title" data-label="Customer">{{ order.customer }}</td>
+                <td data-label="Description">{{ order.description|default:"-" }}</td>
+                <td data-label="Cargo (kg)">{{ order.cargo_weight_kg }}</td>
+                <td data-label="Start">{{ order.planned_start|date:"Y-m-d H:i" }}</td>
+                <td data-label="End">{{ order.planned_end|date:"Y-m-d H:i" }}</td>
+                <td data-label="Vehicle">{{ order.vehicle }}</td>
+                <td data-label="Status">
+                    <form class="inline" method="post" action="{% url 'driver_dashboard' %}">
                         {% csrf_token %}
                         <input type="hidden" name="order_id" value="{{ order.pk }}">
                         <select name="status" onchange="this.form.submit()">
@@ -44,7 +40,7 @@
                 </td>
             </tr>
         {% empty %}
-            <tr><td colspan="8">No active tasks right now.</td></tr>
+            <tr class="empty-row"><td colspan="8">No active tasks right now.</td></tr>
         {% endfor %}
         </tbody>
     </table>
@@ -62,21 +58,19 @@
         <tbody>
         {% for order in history %}
             <tr>
-                <td>{{ order.pk }}</td>
-                <td>{{ order.customer }}</td>
-                <td>{{ order.cargo_weight_kg }}</td>
-                <td>{{ order.planned_start|date:"Y-m-d H:i" }}</td>
-                <td>{{ order.planned_end|date:"Y-m-d H:i" }}</td>
-                <td>{{ order.vehicle }}</td>
-                <td>{{ order.get_status_display }}</td>
+                <td data-label="#">{{ order.pk }}</td>
+                <td class="row-title" data-label="Customer">{{ order.customer }}</td>
+                <td data-label="Cargo (kg)">{{ order.cargo_weight_kg }}</td>
+                <td data-label="Start">{{ order.planned_start|date:"Y-m-d H:i" }}</td>
+                <td data-label="End">{{ order.planned_end|date:"Y-m-d H:i" }}</td>
+                <td data-label="Vehicle">{{ order.vehicle }}</td>
+                <td data-label="Status">{{ order.get_status_display }}</td>
             </tr>
         {% empty %}
-            <tr><td colspan="7">No completed tasks yet.</td></tr>
+            <tr class="empty-row"><td colspan="7">No completed tasks yet.</td></tr>
         {% endfor %}
         </tbody>
     </table>
 </div>
 
 {% endif %}
-
-{% endblock %}

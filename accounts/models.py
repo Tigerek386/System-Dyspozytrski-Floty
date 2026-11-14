@@ -25,7 +25,5 @@ class User(AbstractUser):
         return self.role == self.Role.DRIVER
 
     def home_url(self):
-        """Landing page for this role: drivers get their task overview."""
-        if self.is_driver:
-            return reverse("driver_dashboard")
+        """Everyone lands on the app shell; htmx loads the role fragment."""
         return reverse("dashboard")
