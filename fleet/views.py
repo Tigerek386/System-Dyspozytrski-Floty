@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 
 from accounts.models import User
 
@@ -21,15 +22,18 @@ def _staff_only(view):
 def vehicles(request):
     """Display the vehicles tab."""
     context={"vehicles": Vehicle.objects.all()}
-    return render(request, "fleet/vehicles.html",context)
+
+    if request.headers.get("HX-Request"):
+        response = render(request, "fleet/vehicles.html", context)
+        response["HX-Title"] = "Vehicles - FleetRoute"
+        return response
+    return render(request, "base.html", {**context, "start_url": reverse("vehicles")})
 
 
 @login_required
-@_staff_only
 def dashboard(request):
-    """Single page for dispatchers and fleet managers: view and add vehicles,
-    drivers and transport orders, link driver accounts, and change an
-    order's status (lifecycle)."""
+    """App shell entry point. Staff see the full dashboard; drivers get the
+    shell with their task overview loaded via htmx."""
     context = {
         "vehicles": Vehicle.objects.all(),
         "drivers": Driver.objects.select_related("user").all(),
@@ -87,7 +91,15 @@ def dashboard(request):
                 )
             return redirect("dashboard")
 
-    return render(request, "fleet/dashboard.html", context)
+    if request.headers.get("HX-Request"):
+        response = render(request, "fleet/dashboard.html", context)
+        response["HX-Title"] = "Dashboard - FleetRoute"
+        return response
+    start_url = (
+        reverse("driver_dashboard") if request.user.is_driver
+        else reverse("dashboard")
+    )
+    return render(request, "base.html", {**context, "start_url": start_url})
 
 
 #: statuses a driver may move their own order to from the task overview
@@ -128,4 +140,8 @@ def driver_dashboard(request):
             )
         return redirect("driver_dashboard")
 
-    return render(request, "fleet/driver_dashboard.html", context)
+    if request.headers.get("HX-Request"):
+        response = render(request, "fleet/driver_dashboard.html", context)
+        response["HX-Title"] = "My tasks - FleetRoute"
+        return response
+    return render(request, "base.html", {**context, "start_url": reverse("driver_dashboard")})
