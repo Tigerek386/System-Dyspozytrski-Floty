@@ -11,13 +11,15 @@
 
 <header class="topbar">
     {% block header_items %}
-    <strong>FleetRoute</strong>
-    {% if user.is_authenticated and not user.is_driver %}
-    <div hx-get="{% url 'vehicles' %}" hx-trigger="click" hx-target="#content" style="display:flex;background:transparent;padding:0.2rem 0.7rem;margin-left:8px;margin-right:auto;cursor:pointer;">
-        <img src="{% static 'svg/vehicles.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px;">
-        <p1 style="font-weight: 600;">Pojazdy</p1>
+    <div class="header-brand">
+        <strong>FleetRoute</strong>
+        {% if user.is_authenticated and not user.is_driver %}
+        <div class="vehicles-link" hx-get="{% url 'vehicles' %}" hx-trigger="click" hx-target="#content">
+            <img src="{% static 'svg/vehicles.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px;">
+            <p1 style="font-weight: 600;">Pojazdy</p1>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
     {% endblock %}
     {% block header_actions %}
     <div class="header-actions">
