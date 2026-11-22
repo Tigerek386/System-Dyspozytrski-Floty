@@ -46,7 +46,11 @@
 </div>
 
 <div class="card">
-    <h2>Vehicles</h2>
+    <div class="card-head">
+        <h2>Vehicles</h2>
+        <a class="btn" href="{% url 'vehicles' %}"
+           hx-get="{% url 'vehicles' %}" hx-target="#content" hx-push-url="true">Add vehicle</a>
+    </div>
     <table>
         <thead>
             <tr><th>Plate</th><th>Type</th><th>Max load (kg)</th><th>Inspection until</th><th>Insurance until</th></tr>
@@ -61,7 +65,7 @@
                 <td data-label="Insurance until">{{ vehicle.insurance_expiry|date:"Y-m-d" }}</td>
             </tr>
         {% empty %}
-            <tr class="empty-row"><td colspan="5">No vehicles yet — add one below.</td></tr>
+            <tr class="empty-row"><td colspan="5">No vehicles yet — use the Vehicles page to add one.</td></tr>
         {% endfor %}
         </tbody>
     </table>
@@ -112,22 +116,6 @@
             </label>
         </div>
         <button type="submit">Link account</button>
-    </form>
-</div>
-
-<div class="card">
-    <h2>Add vehicle</h2>
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="form" value="vehicle">
-        <div class="form-grid">
-            {% for field in vehicle_form %}
-                <label>{{ field.label }} {{ field }}
-                    {% if field.errors %}<span class="field-errors">{{ field.errors|join:", " }}</span>{% endif %}
-                </label>
-            {% endfor %}
-        </div>
-        <button type="submit">Add vehicle</button>
     </form>
 </div>
 

@@ -60,6 +60,25 @@
         background: #eef2f6;
     }
 
+    .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+    }
+
+    a.btn {
+        display: inline-flex;
+        align-items: center;
+        background: #1f3a5f;
+        color: #fefcfc;
+        text-decoration: none;
+        padding: 0.45rem 1rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
     form.inline {
         display: inline;
     }
@@ -270,6 +289,11 @@
 
     /* Larger touch targets. */
     button {
+        padding: 0.55rem 1.1rem;
+        font-size: 0.95rem;
+    }
+
+    a.btn {
         padding: 0.55rem 1.1rem;
         font-size: 0.95rem;
     }

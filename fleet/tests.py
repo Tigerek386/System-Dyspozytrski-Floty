@@ -49,11 +49,11 @@ def order_data(vehicle, driver, start=None, weight=500):
     }
 
 
-# --- views: adding data from the dashboard page ---------------------------
+# --- views: adding data from the dashboard / vehicles pages ---------------
 
-def test_add_vehicle_via_dashboard(logged_in_client):
+def test_add_vehicle_via_vehicles_page(logged_in_client):
     resp = logged_in_client.post(
-        reverse("dashboard"),
+        reverse("vehicles"),
         {
             "form": "vehicle",
             "plate_number": "K456DEF",
@@ -65,7 +65,42 @@ def test_add_vehicle_via_dashboard(logged_in_client):
     )
 
     assert resp.status_code == 302
+    assert resp.headers["Location"] == reverse("vehicles")
     assert Vehicle.objects.filter(plate_number="K456DEF").exists()
+
+
+def test_add_vehicle_form_renders_on_vehicles_page(logged_in_client):
+    htmx = {"HX-Request": "true"}
+
+    resp = logged_in_client.get(reverse("vehicles"), headers=htmx)
+    assert b"Add vehicle" in resp.content
+
+    # The dashboard keeps only the link/button to the vehicles page.
+    dashboard = logged_in_client.get(reverse("dashboard"), headers=htmx)
+    assert f'href="{reverse("vehicles")}"'.encode() in dashboard.content
+    assert b'name="form" value="vehicle"' not in dashboard.content
+
+
+def test_vehicle_form_errors_re_render_vehicles_page(logged_in_client):
+    resp = logged_in_client.post(
+        reverse("vehicles"),
+        {"form": "vehicle", "plate_number": "", "max_load_capacity_kg": 1000},
+        headers={"HX-Request": "true"},
+    )
+
+    assert Vehicle.objects.count() == 0
+    assert b"field-errors" in resp.content
+
+
+def test_history_restore_returns_fragment_not_shell(logged_in_client):
+    # htmx asks for a restore when its history cache has no snapshot,
+    # so it must get the tab fragment to swap into #content
+    resp = logged_in_client.get(
+        reverse("vehicles"), headers={"HX-History-Restore-Request": "true"}
+    )
+
+    assert b'id="content"' not in resp.content
+    assert b"Add vehicle" in resp.content
 
 
 def test_add_driver_via_dashboard(logged_in_client):

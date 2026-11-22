@@ -17,13 +17,35 @@ def _staff_only(view):
         return view(request, *args, **kwargs)
     return wrapper
 
+
+def _is_htmx(request):
+    """True for htmx clicks *and* for back/forward history restores.
+
+    Both must return the tab fragment instead of the shell: htmx swaps the
+    response into #content (hx-history-elt), so the header/shell stays intact.
+    Restore requests carry HX-History-Restore-Request, which happens when the
+    history snapshot is not in htmx's cache (new tab, cache overflow).
+    """
+    return bool(
+        request.headers.get("HX-Request")
+        or request.headers.get("HX-History-Restore-Request")
+    )
+
 @login_required
 @_staff_only
 def vehicles(request):
-    """Display the vehicles tab."""
-    context={"vehicles": Vehicle.objects.all()}
+    """Display the vehicles tab with the add-vehicle form."""
+    context = {"vehicles": Vehicle.objects.all(), "vehicle_form": VehicleForm()}
 
-    if request.headers.get("HX-Request"):
+    if request.method == "POST":
+        form = VehicleForm(request.POST)
+        if form.is_valid():
+            obj = form.save()
+            messages.success(request, f"Saved: {obj}")
+            return redirect("vehicles")
+        context["vehicle_form"] = form  # re-render with validation errors
+
+    if _is_htmx(request):
         response = render(request, "fleet/vehicles.html", context)
         response["HX-Title"] = "Vehicles - FleetRoute"
         return response
@@ -40,7 +62,6 @@ def dashboard(request):
         "orders": TransportOrder.objects.select_related("vehicle", "driver").all(),
         "order_statuses": TransportOrder.Status.choices,
         "driver_accounts": User.objects.filter(role=User.Role.DRIVER).order_by("username"),
-        "vehicle_form": VehicleForm(),
         "driver_form": DriverForm(),
         "order_form": TransportOrderForm(),
     }
@@ -48,9 +69,8 @@ def dashboard(request):
     if request.method == "POST":
         form_key = request.POST.get("form")
 
-        if form_key in ("vehicle", "driver", "order"):
+        if form_key in ("driver", "order"):
             form_class = {
-                "vehicle": VehicleForm,
                 "driver": DriverForm,
                 "order": TransportOrderForm,
             }[form_key]
@@ -91,7 +111,7 @@ def dashboard(request):
                 )
             return redirect("dashboard")
 
-    if request.headers.get("HX-Request"):
+    if _is_htmx(request):
         response = render(request, "fleet/dashboard.html", context)
         response["HX-Title"] = "Dashboard - FleetRoute"
         return response
@@ -140,7 +160,7 @@ def driver_dashboard(request):
             )
         return redirect("driver_dashboard")
 
-    if request.headers.get("HX-Request"):
+    if _is_htmx(request):
         response = render(request, "fleet/driver_dashboard.html", context)
         response["HX-Title"] = "My tasks - FleetRoute"
         return response
