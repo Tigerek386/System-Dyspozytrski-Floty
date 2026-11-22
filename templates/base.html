@@ -14,7 +14,7 @@
     <div class="header-brand">
         <strong>FleetRoute</strong>
         {% if user.is_authenticated and not user.is_driver %}
-        <div class="vehicles-link" hx-get="{% url 'vehicles' %}" hx-trigger="click" hx-target="#content">
+        <div class="vehicles-link" hx-get="{% url 'vehicles' %}" hx-trigger="click" hx-target="#content" hx-push-url="true">
             <img src="{% static 'svg/vehicles.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px;">
             <p1 style="font-weight: 600;">Pojazdy</p1>
         </div>
@@ -26,10 +26,10 @@
         {% if user.is_authenticated %}
             <span>{{ user.username }} ({{ user.get_role_display }})</span>
             {% if user.is_driver %}
-                <a href="{% url 'driver_dashboard' %}" hx-get="{% url 'driver_dashboard' %}" hx-target="#content">My tasks</a>
+                <a href="{% url 'driver_dashboard' %}" hx-get="{% url 'driver_dashboard' %}" hx-target="#content" hx-push-url="true">My tasks</a>
             {% else %}
             <div class="dashboard-link">
-                <a href="{% url 'dashboard' %}" hx-get="{% url 'dashboard' %}" hx-target="#content">
+                <a href="{% url 'dashboard' %}" hx-get="{% url 'dashboard' %}" hx-target="#content" hx-push-url="true">
                 <img src="{% static 'svg/dashboard.svg' %}" alt="" style="float:left">
                 Dashboard
                 </a>
@@ -56,8 +56,11 @@
         </ul>
     {% endif %}
     {% if start_url %}
-    {# App shell: htmx loads the role-based content fragment into #content. #}
-    <div id="content" hx-get="{{ start_url }}" hx-trigger="load"></div>
+    {# App shell. htmx loads the role-based tab into #content; hx-push-url keeps #}
+    {# the address bar in sync with the loaded tab so the browser back/forward #}
+    {# buttons walk through htmx history (restoring #content only, thanks to #}
+    {# hx-history-elt) instead of reloading the whole shell. #}
+    <div id="content" hx-history-elt hx-get="{{ start_url }}" hx-trigger="load" hx-push-url="true"></div>
     {% else %}
         {% block content %}{% endblock %}
     {% endif %}
