@@ -1,0 +1,65 @@
+<h1>Drivers</h1>
+
+<div class="card">
+    <h2>Drivers</h2>
+    <table>
+        <thead>
+            <tr><th>Name</th><th>License</th><th>Phone</th><th>Active</th><th>Linked account</th></tr>
+        </thead>
+        <tbody>
+        {% for driver in drivers %}
+            <tr>
+                <td class="row-title" data-label="Name">{{ driver }}</td>
+                <td data-label="License">{{ driver.license_category }}</td>
+                <td data-label="Phone">{{ driver.phone|default:"-" }}</td>
+                <td data-label="Active">{{ driver.is_active|yesno }}</td>
+                <td data-label="Linked account">{{ driver.user.username|default:"-" }}</td>
+            </tr>
+        {% empty %}
+            <tr class="empty-row"><td colspan="5">No drivers yet — add one below.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Add driver</h2>
+    <form method="post" action="{% url 'drivers' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="driver">
+        <div class="form-grid">
+            {% for field in driver_form %}
+                <label>{{ field.label }} {{ field }}
+                    {% if field.errors %}<span class="field-errors">{{ field.errors|join:", " }}</span>{% endif %}
+                </label>
+            {% endfor %}
+        </div>
+        <button type="submit">Add driver</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Link driver account</h2>
+    <p>Connect a registered driver account to a driver so they can log in and see their tasks.</p>
+    <form method="post" action="{% url 'drivers' %}" style="max-width: 560px;">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="link_driver">
+        <div class="form-grid">
+            <label>Driver
+                <select name="driver_id">
+                    {% for driver in drivers %}
+                        <option value="{{ driver.pk }}">{{ driver }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>Driver account
+                <select name="user_id">
+                    {% for account in driver_accounts %}
+                        <option value="{{ account.pk }}">{{ account.username }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <button type="submit">Link account</button>
+    </form>
+</div>

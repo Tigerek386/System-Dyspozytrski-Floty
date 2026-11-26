@@ -16,7 +16,11 @@
         {% if user.is_authenticated and not user.is_driver %}
         <div class="vehicles-link" hx-get="{% url 'vehicles' %}" hx-trigger="click" hx-target="#content" hx-push-url="true">
             <img src="{% static 'svg/vehicles.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px;">
-            <p1 style="font-weight: 600;">Pojazdy</p1>
+            <span style="font-weight: 600;">Pojazdy</span>
+        </div>
+        <div class="vehicles-link" hx-get="{% url 'drivers' %}" hx-trigger="click" hx-target="#content" hx-push-url="true">
+            <img src="{% static 'svg/profile.svg' %}" alt="" class="vehicle-svg" style="padding-right: 4px;">
+            <span style="font-weight: 600;">Kierowcy</span>
         </div>
         {% endif %}
     </div>
