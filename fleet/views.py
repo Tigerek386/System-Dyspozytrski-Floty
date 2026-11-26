@@ -31,6 +31,7 @@ def _is_htmx(request):
         or request.headers.get("HX-History-Restore-Request")
     )
 
+
 @login_required
 @_staff_only
 def vehicles(request):
@@ -50,6 +51,96 @@ def vehicles(request):
         response["HX-Title"] = "Vehicles - FleetRoute"
         return response
     return render(request, "base.html", {**context, "start_url": reverse("vehicles")})
+
+
+@login_required
+@_staff_only
+def drivers(request):
+    """Display the drivers tab with add-driver and link-account forms."""
+    context = {
+        "drivers": Driver.objects.select_related("user").all(),
+        "driver_accounts": User.objects.filter(role=User.Role.DRIVER).order_by("username"),
+        "driver_form": DriverForm(),
+    }
+
+    if request.method == "POST":
+        form_key = request.POST.get("form")
+
+        if form_key == "link_driver":
+            driver_id = request.POST.get("driver_id")
+            user_id = request.POST.get("user_id")
+            if not driver_id or not user_id:
+                messages.error(request, "Select both a driver and a driver account.")
+                return redirect("drivers")
+
+            driver = get_object_or_404(Driver, pk=driver_id)
+            account = get_object_or_404(User, pk=user_id, role=User.Role.DRIVER)
+            existing = Driver.objects.filter(user=account).exclude(pk=driver.pk).first()
+            if existing:
+                messages.error(
+                    request,
+                    f"Account {account.username} is already linked to {existing}.",
+                )
+            else:
+                driver.user = account
+                driver.save(update_fields=["user"])
+                messages.success(
+                    request,
+                    f"Linked account {account.username} to {driver}.",
+                )
+            return redirect("drivers")
+        else:
+            form = DriverForm(request.POST)
+            if form.is_valid():
+                obj = form.save()
+                messages.success(request, f"Saved: {obj}")
+                return redirect("drivers")
+            context["driver_form"] = form
+
+    if _is_htmx(request):
+        response = render(request, "fleet/drivers.html", context)
+        response["HX-Title"] = "Drivers - FleetRoute"
+        return response
+    return render(request, "base.html", {**context, "start_url": reverse("drivers")})
+
+
+@login_required
+@_staff_only
+def orders(request):
+    """Display the transport orders tab with status updates and the add-order form."""
+    context = {
+        "orders": TransportOrder.objects.select_related("vehicle", "driver").all(),
+        "order_statuses": TransportOrder.Status.choices,
+        "order_form": TransportOrderForm(),
+    }
+
+    if request.method == "POST":
+        form_key = request.POST.get("form")
+
+        if form_key == "status":
+            order = get_object_or_404(TransportOrder, pk=request.POST.get("order_id"))
+            new_status = request.POST.get("status")
+            if new_status in TransportOrder.Status.values:
+                order.status = new_status
+                order.save(update_fields=["status"])
+                messages.success(
+                    request,
+                    f"Order #{order.pk} status changed to {order.get_status_display()}.",
+                )
+            return redirect("orders")
+        else:
+            form = TransportOrderForm(request.POST)
+            if form.is_valid():
+                obj = form.save()
+                messages.success(request, f"Saved: {obj}")
+                return redirect("orders")
+            context["order_form"] = form
+
+    if _is_htmx(request):
+        response = render(request, "fleet/orders.html", context)
+        response["HX-Title"] = "Transport orders - FleetRoute"
+        return response
+    return render(request, "base.html", {**context, "start_url": reverse("orders")})
 
 
 @login_required

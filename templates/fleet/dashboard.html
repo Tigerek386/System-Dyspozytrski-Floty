@@ -1,7 +1,11 @@
 <h1>Dashboard</h1>
 
 <div class="card">
-    <h2>Transport orders</h2>
+    <div class="card-head">
+        <h2>Transport orders</h2>
+        <a class="btn" href="{% url 'orders' %}"
+           hx-get="{% url 'orders' %}" hx-target="#content" hx-push-url="true">Add transport order</a>
+    </div>
     <table>
         <thead>
             <tr>
@@ -21,7 +25,7 @@
                 <td data-label="Vehicle">{{ order.vehicle }}</td>
                 <td data-label="Driver">{{ order.driver }}</td>
                 <td data-label="Status">
-                    <form class="inline" method="post">
+                    <form class="inline" method="post" action="{% url 'dashboard' %}">
                         {% csrf_token %}
                         <input type="hidden" name="form" value="status">
                         <input type="hidden" name="order_id" value="{{ order.pk }}">
@@ -39,7 +43,7 @@
                 </td>
             </tr>
         {% empty %}
-            <tr class="empty-row"><td colspan="10">No orders yet — add one below.</td></tr>
+            <tr class="empty-row"><td colspan="11">No orders yet — use the Transport orders page to add one.</td></tr>
         {% endfor %}
         </tbody>
     </table>
@@ -72,7 +76,11 @@
 </div>
 
 <div class="card">
-    <h2>Drivers</h2>
+    <div class="card-head">
+        <h2>Drivers</h2>
+        <a class="btn" href="{% url 'drivers' %}"
+           hx-get="{% url 'drivers' %}" hx-target="#content" hx-push-url="true">Add driver</a>
+    </div>
     <table>
         <thead>
             <tr><th>Name</th><th>License</th><th>Phone</th><th>Active</th><th>Linked account</th></tr>
@@ -87,69 +95,8 @@
                 <td data-label="Linked account">{{ driver.user.username|default:"-" }}</td>
             </tr>
         {% empty %}
-            <tr class="empty-row"><td colspan="5">No drivers yet — add one below.</td></tr>
+            <tr class="empty-row"><td colspan="5">No drivers yet — use the Drivers page to add one.</td></tr>
         {% endfor %}
         </tbody>
     </table>
-</div>
-
-<div class="card">
-    <h2>Link driver account</h2>
-    <p>Connect a registered driver account to a driver so they can log in and see their tasks.</p>
-    <form method="post" style="max-width: 560px;">
-        {% csrf_token %}
-        <input type="hidden" name="form" value="link_driver">
-        <div class="form-grid">
-            <label>Driver
-                <select name="driver_id">
-                    {% for driver in drivers %}
-                        <option value="{{ driver.pk }}">{{ driver }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-            <label>Driver account
-                <select name="user_id">
-                    {% for account in driver_accounts %}
-                        <option value="{{ account.pk }}">{{ account.username }}</option>
-                    {% endfor %}
-                </select>
-            </label>
-        </div>
-        <button type="submit">Link account</button>
-    </form>
-</div>
-
-<div class="card">
-    <h2>Add driver</h2>
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="form" value="driver">
-        <div class="form-grid">
-            {% for field in driver_form %}
-                <label>{{ field.label }} {{ field }}
-                    {% if field.errors %}<span class="field-errors">{{ field.errors|join:", " }}</span>{% endif %}
-                </label>
-            {% endfor %}
-        </div>
-        <button type="submit">Add driver</button>
-    </form>
-</div>
-
-<div class="card">
-    <h2>Add transport order</h2>
-    {% if order_form.non_field_errors %}
-        <p class="field-errors">{{ order_form.non_field_errors|join:", " }}</p>
-    {% endif %}
-    <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="form" value="order">
-        <div class="form-grid">
-            {% for field in order_form %}
-                <label>{{ field.label }} {{ field }}
-                    {% if field.errors %}<span class="field-errors">{{ field.errors|join:", " }}</span>{% endif %}
-                </label>
-            {% endfor %}
-        </div>
-        <button type="submit">Add order</button>
-    </form>
 </div>

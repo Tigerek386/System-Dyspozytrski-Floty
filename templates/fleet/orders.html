@@ -1,0 +1,65 @@
+<h1>Transport orders</h1>
+
+<div class="card">
+    <h2>Transport orders</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th><th>Customer</th><th>Cargo (kg)</th><th>Start</th><th>End</th>
+                <th>Vehicle</th><th>Driver</th><th>Status</th><th>Price (PLN)</th>
+                <th>Cost (PLN)</th><th>Profit (PLN)</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td data-label="#">{{ order.pk }}</td>
+                <td class="row-title" data-label="Customer">{{ order.customer }}</td>
+                <td data-label="Cargo (kg)">{{ order.cargo_weight_kg }}</td>
+                <td data-label="Start">{{ order.planned_start|date:"Y-m-d H:i" }}</td>
+                <td data-label="End">{{ order.planned_end|date:"Y-m-d H:i" }}</td>
+                <td data-label="Vehicle">{{ order.vehicle }}</td>
+                <td data-label="Driver">{{ order.driver }}</td>
+                <td data-label="Status">
+                    <form class="inline" method="post" action="{% url 'orders' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form" value="status">
+                        <input type="hidden" name="order_id" value="{{ order.pk }}">
+                        <select name="status" onchange="this.form.submit()">
+                            {% for value, label in order_statuses %}
+                                <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </td>
+                <td data-label="Price (PLN)">{{ order.price_pln }}</td>
+                <td data-label="Cost (PLN)">{{ order.estimated_cost_pln }}</td>
+                <td class="{% if order.profit_pln >= 0 %}profit-positive{% else %}profit-negative{% endif %}" data-label="Profit (PLN)">
+                    {{ order.profit_pln }}
+                </td>
+            </tr>
+        {% empty %}
+            <tr class="empty-row"><td colspan="11">No orders yet — add one below.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Add transport order</h2>
+    {% if order_form.non_field_errors %}
+        <p class="field-errors">{{ order_form.non_field_errors|join:", " }}</p>
+    {% endif %}
+    <form method="post" action="{% url 'orders' %}">
+        {% csrf_token %}
+        <input type="hidden" name="form" value="order">
+        <div class="form-grid">
+            {% for field in order_form %}
+                <label>{{ field.label }} {{ field }}
+                    {% if field.errors %}<span class="field-errors">{{ field.errors|join:", " }}</span>{% endif %}
+                </label>
+            {% endfor %}
+        </div>
+        <button type="submit">Add order</button>
+    </form>
+</div>
